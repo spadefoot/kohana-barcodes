@@ -27,38 +27,38 @@
  */
 class Controller_Barcode extends Controller {
 
-    public function before() {
-        parent::before();
-        $this->auto_render = FALSE;
-    }
+	public function before() {
+		parent::before();
+		$this->auto_render = FALSE;
+	}
 
-    public function action_index() {
-        $this->request->redirect('error/404');
-    }
+	public function action_index() {
+		$this->request->redirect('error/404');
+	}
 
-    public function action_code39() {
-        $data = $this->request->param('id');
-        $barcode = new Code39Barcode($data);
-        $barcode->output();
-    }
+	public function action_code39() {
+		$data = $this->request->param('id');
+		$barcode = new Code39Barcode($data);
+		$barcode->output();
+	}
 
-    public function action_code128() {
-        $data = $this->request->param('id');
-        $barcode = new Code128Barcode($data);
-        $barcode->output();
-    }
+	public function action_code128() {
+		$data = $this->request->param('id');
+		$barcode = new Code128Barcode($data);
+		$barcode->output();
+	}
 
-    public function action_qrcode() {
-        $data = $this->request->param('id');
-        $barcode = new QRBarcode($data);
-        $barcode->output();
-    }
+	public function action_qrcode() {
+		$data = $this->request->param('id');
+		$barcode = new QRBarcode($data);
+		$barcode->output();
+	}
 
-    public function action_upca() {
-        $data = $this->request->param('id');
-        $barcode = new UPCABarcode($data);
-        $barcode->output();
-    }
+	public function action_upca() {
+		$data = $this->request->param('id');
+		$barcode = new UPCABarcode($data);
+		$barcode->output();
+	}
 
 }
 ?>

@@ -35,7 +35,7 @@ abstract class Base_QRBarcode extends Kohana_Object implements Barcode_Interface
 	 * @access protected
 	 * @var array
 	 */
-    protected $file = NULL;
+	protected $file = NULL;
 
 	/**
 	 * This variable stores the height and width of the image.
@@ -43,118 +43,118 @@ abstract class Base_QRBarcode extends Kohana_Object implements Barcode_Interface
 	 * @access protected
 	 * @var array
 	 */
-    protected $size = NULL;
+	protected $size = NULL;
 
-    /**
-     * Initializes this bar code creator.
-     *
-     * @access public
-     * @param $data string                      the data string to be encoded
-     * @param $size integer                     the size of the barcode
-     * @param $margin integer                   the margin around the barcode
-     */
-    public function __construct($data, $size = 150, $margin = 4) {
-        $this->file = GoogleBarcodeGenerator::qr_code($data, $size, 'UTF-8', 'L', $margin);
-        $this->size = $size;
-    }
+	/**
+	 * Initializes this bar code creator.
+	 *
+	 * @access public
+	 * @param $data string                      the data string to be encoded
+	 * @param $size integer                     the size of the barcode
+	 * @param $margin integer                   the margin around the barcode
+	 */
+	public function __construct($data, $size = 150, $margin = 4) {
+		$this->file = GoogleBarcodeGenerator::qr_code($data, $size, 'UTF-8', 'L', $margin);
+		$this->size = $size;
+	}
 
-    /**
-     * This function controllers which properties are accessible.
-     *
-     * @access public
-     * @param string $key                       the name of the property
-     * @return mixed                            the value of the property
-     */
-    public function __get($key) {
-        switch ($key) {
-            case 'file':
-                return $this->file;
-            case 'width':
-            case 'height':
-                return $this->size;
-            default:
-                return NULL;
-        }
-    }
+	/**
+	 * This function controllers which properties are accessible.
+	 *
+	 * @access public
+	 * @param string $key                       the name of the property
+	 * @return mixed                            the value of the property
+	 */
+	public function __get($key) {
+		switch ($key) {
+			case 'file':
+				return $this->file;
+			case 'width':
+			case 'height':
+				return $this->size;
+			default:
+				return NULL;
+		}
+	}
 
-    /**
-     * This function sends back the bar code image.
-     *
-     * @access public
-     * @param $file_name                        the file name
-     */
-    public function output($file_name = NULL) {
-        $barcode = file_get_contents($this->file);
-        header("Cache-Control: no-cache, must-revalidate");
-        header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
-        header('Content-Type: image/png');
-        if (is_string($file_name)) {
-            header("Content-Disposition: attachment; filename=\"{$file_name}\"");
-        }
-        echo $barcode;
-        exit();
-    }
+	/**
+	 * This function sends back the bar code image.
+	 *
+	 * @access public
+	 * @param $file_name                        the file name
+	 */
+	public function output($file_name = NULL) {
+		$barcode = file_get_contents($this->file);
+		header("Cache-Control: no-cache, must-revalidate");
+		header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
+		header('Content-Type: image/png');
+		if (is_string($file_name)) {
+			header("Content-Disposition: attachment; filename=\"{$file_name}\"");
+		}
+		echo $barcode;
+		exit();
+	}
 
-    /**
-     * This function renders the HTML image tag for displaying the bar code.
-     *
-     * @access public
-     * @param array $attributes                 any additional attributes to be added
-     *                                          to the HTML image tag
-     * @return string                           the HTML image tag
-     */
-    public function render($attributes = array()) {
-        $properties = '';
-        if (is_array($attributes)) {
-            foreach ($attributes as $key => $val) {
-                $properties .= "{$key}=\"{$val}\" ";
-            }
-        }
-        $html = "<img src=\"{$this->file}\" {$properties}/>";
-        return $html;
-    }
+	/**
+	 * This function renders the HTML image tag for displaying the bar code.
+	 *
+	 * @access public
+	 * @param array $attributes                 any additional attributes to be added
+	 *                                          to the HTML image tag
+	 * @return string                           the HTML image tag
+	 */
+	public function render($attributes = array()) {
+		$properties = '';
+		if (is_array($attributes)) {
+			foreach ($attributes as $key => $val) {
+				$properties .= "{$key}=\"{$val}\" ";
+			}
+		}
+		$html = "<img src=\"{$this->file}\" {$properties}/>";
+		return $html;
+	}
 
-    /**
-     * This function saves the image of the QR code to disk.
-     *
-     * @access public
-     * @param string $file                      the URI for where the image will be stored
-     */
-    public function save($file) {
-        file_put_contents($file, file_get_contents($this->file));
-        $this->file = $file;
-    }
+	/**
+	 * This function saves the image of the QR code to disk.
+	 *
+	 * @access public
+	 * @param string $file                      the URI for where the image will be stored
+	 */
+	public function save($file) {
+		file_put_contents($file, file_get_contents($this->file));
+		$this->file = $file;
+	}
 
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    /**
-     * This function will encode a data string.
-     *
-     * @access public
-     * @static
-     * @param $data string                      the data string to be encoded
-     * @param array $attributes                 any additional attributes to be added
-     *                                          to the HTML image tag
-     * @return string                           the HTML image tag
-     */
-    public static function encode($data, $attributes = array()) {
-        $barcode = new QRBarcode($data);
-        return $barcode->render($attributes);
-    }
+	/**
+	 * This function will encode a data string.
+	 *
+	 * @access public
+	 * @static
+	 * @param $data string                      the data string to be encoded
+	 * @param array $attributes                 any additional attributes to be added
+	 *                                          to the HTML image tag
+	 * @return string                           the HTML image tag
+	 */
+	public static function encode($data, $attributes = array()) {
+		$barcode = new QRBarcode($data);
+		return $barcode->render($attributes);
+	}
 
 	/**
 	 * This function returns an instance of this class.
 	 *
 	 * @access public
 	 * @static
-     * @param $data string                      the data string to be encoded
-     * @param $size integer                     the size of the barcode
-     * @param $margin integer                   the margin around the barcode
+	 * @param $data string                      the data string to be encoded
+	 * @param $size integer                     the size of the barcode
+	 * @param $margin integer                   the margin around the barcode
 	 * @return QRBarcode		                an instance of this class
 	 */
-    public static function factory($data, $size = 150, $margin = 4) {
-        return new QRBarcode($data, $size, $margin);
-    }
+	public static function factory($data, $size = 150, $margin = 4) {
+		return new QRBarcode($data, $size, $margin);
+	}
 
 }
 ?>

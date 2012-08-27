@@ -25,9 +25,9 @@
  */
 interface Base_Barcode_Interface {
 
-    public function output($file_name = NULL);
-    public function render($attributes = array());
-    public function save($file);
+	public function output($file_name = NULL);
+	public function render($attributes = array());
+	public function save($file);
 
 }
 ?>
