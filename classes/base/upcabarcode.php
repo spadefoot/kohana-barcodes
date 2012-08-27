@@ -21,7 +21,7 @@
  *
  * @package Barcode
  * @category Creator
- * @version 2012-01-09
+ * @version 2012-08-27
  *
  * @see http://snipplr.com/view/12870/
  * @see http://snipplr.com/view.php?codeview&id=12870
@@ -102,7 +102,7 @@ abstract class Base_UPCABarcode extends Kohana_Object implements Barcode_Interfa
         }
         $bars .= self::$patterns['end'][0];
         
-        // Generates the barcode
+        // Generates the barcode image
         $pixels = 2;
         $height = 100;
         $image = imagecreate($pixels * 95 + 30, $height + 30);

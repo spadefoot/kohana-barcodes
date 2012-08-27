@@ -16,18 +16,12 @@
  * limitations under the License.
  */
 
-include_once('Image/Barcode.php'); // /usr/local/lib/php/Image/Barcode.php
-//include_once('Image/Barcode/Code39.php');
-
 /**
  * This class generates a Code 39 barcode.
  *
  * @package Barcode
  * @category Creator
- * @version 2012-01-09
- *
- * @see http://pear.php.net/package/Image_Barcode/docs/latest/Image_Barcode/Image_Barcode_Code39.html#methodImage_Barcode_Code39
- * @see http://svn.php.net/viewvc/pear/packages/Image_Barcode/trunk/Image/Barcode/
+ * @version 2012-08-27
  */
 abstract class Base_Code39Barcode extends Kohana_Object implements Barcode_Interface {
 
@@ -85,15 +79,63 @@ abstract class Base_Code39Barcode extends Kohana_Object implements Barcode_Inter
      * @param $file_name                        the file name
      */
     public function output($file_name = NULL) {
+		// Generates the barcode image
+        $data = '*' . $this->data . '*';
+		$length = strlen($data);
+        $width = $length * 16;
+        $height = 33;
+		$padding = array(0, 0, 18, 0); // Follows CSS padding: top right bottom left
+        $image = imagecreate(($padding[1] + $padding[3]) + $width, ($padding[0] + $padding[2]) + $height);
+        $black = imagecolorallocate($image, 0, 0, 0);
+        $white = imagecolorallocate($image, 255, 255, 255);
+        imagefilledrectangle($image, 0, 0, ($padding[1] + $padding[3]) + $width, ($padding[0] + $padding[2]) + $height, $white);
+		$x1 = 0;
+        for ($i = 0; $i < $length; $i++) {
+			$code = self::$values[$data[$i]];
+			for ($j = 0; $j < 9; $j++) {
+				switch ($code[$j]) { // symbol
+					case 'B': // wide
+						$x2 = $x1 + 2;
+						$color = $black;
+					break;
+					case 'b': // narrow
+						$x2 = $x1 + 0;
+						$color = $black;
+					break;
+					case 'W': // wide
+						$x2 = $x1 + 2;
+						$color = $white;
+					break;
+					case 'w': // narrow
+						$x2 = $x1 + 0;
+						$color = $white;
+					break;
+				}
+				imagefilledrectangle($image, $padding[3] + $x1, $padding[0], $padding[3] + $x2, $padding[0] + $height, $color);
+				$x1 = $x2 + 1;
+			}
+			$x1 += 1;
+        }
+
+        // Adds the human readable label
+		$offset = array(16, 1); // x, y
+		$adjustment = 5;
+        $font = 5;
+		$length = strlen($this->data);
+		for ($x = 1; $x <= $length; $x++) {
+            imagestring($image, $font, $padding[3] + ($x * $offset[0]) + $adjustment, $padding[0] + $height + $offset[1], $data[$x], $black);
+        }
+
+        // Outputs the header and content
         header("Cache-Control: no-cache, must-revalidate");
         header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
         header('Content-Type: image/png');
         if (is_string($file_name)) {
             header("Content-Disposition: attachment; filename=\"{$file_name}\"");
         }
-        $bc = new Image_Barcode();
-        $bc->draw($this->data, 'Code39', 'png');
-        exit();
+        imagepng($image);
+        imagedestroy($image);
+		exit();
     }
 
     /**
@@ -183,6 +225,60 @@ abstract class Base_Code39Barcode extends Kohana_Object implements Barcode_Inter
         'bwbWbWbWb' => '%',
         'bWbwBwBwb' => '*',
     );
+
+    /**
+     * This function acts as a lookup table for matching Code 39 code sets.
+     *
+     * @access protected
+     * @static
+     * @return array                            the lookup table
+     */
+    protected static $values = array(
+        '0' => 'bwbWBwBwb',
+        '1' => 'BwbWbwbwB',
+        '2' => 'bwBWbwbwB',
+        '3' => 'BwBWbwbwb',
+        '4' => 'bwbWBwbwB',
+        '5' => 'BwbWBwbwb',
+        '6' => 'bwBWBwbwb',
+        '7' => 'bwbWbwBwB',
+        '8' => 'BwbWbwBwb',
+        '9' => 'bwBWbwBwb',
+        'A' => 'BwbwbWbwB',
+        'B' => 'bwBwbWbwB',
+        'C' => 'BwBwbWbwb',
+        'D' => 'bwbwBWbwB',
+        'E' => 'BwbwBWbwb',
+        'F' => 'bwBwBWbwb',
+        'G' => 'bwbwbWBwB',
+        'H' => 'BwbwbWBwb',
+        'I' => 'bwBwbWBwb',
+        'J' => 'bwbwBWBwb',
+        'K' => 'BwbwbwbWB',
+        'L' => 'bwBwbwbWB',
+        'M' => 'BwBwbwbWb',
+        'N' => 'bwbwBwbWB',
+        'O' => 'BwbwBwbWb',
+        'P' => 'bwBwBwbWb',
+        'Q' => 'bwbwbwBWB',
+        'R' => 'BwbwbwBWb',
+        'S' => 'bwBwbwBWb',
+        'T' => 'bwbwBwBWb',
+        'U' => 'BWbwbwbwB',
+        'V' => 'bWBwbwbwB',
+        'W' => 'BWBwbwbwb',
+        'X' => 'bWbwBwbwB',
+        'Y' => 'BWbwBwbwb',
+        'Z' => 'bWBwBwbwb',
+        '-' => 'bWbwbwBwB',
+        '.' => 'BWbwbwBwb',
+        ' ' => 'bWBwbwBwb',
+        '$' => 'bWbWbWbwb',
+        '/' => 'bWbWbwbWb',
+        '+' => 'bWbwbWbWb',
+        '%' => 'bwbWbWbWb',
+        '*' => 'bWbwBwBwb',
+	);
 
     /**
      * This function computes the checksum for the specified data string.

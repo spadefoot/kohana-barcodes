@@ -22,7 +22,7 @@
  *
  * @package Barcode
  * @category Creator
- * @version 2012-01-09
+ * @version 2012-08-27
  *
  * @see http://www.barcodeisland.com/code128.phtml
  * @see http://www.barcodeisland.com/uccean128.phtml
@@ -146,24 +146,26 @@ abstract class Base_Code128Barcode extends Kohana_Object implements Barcode_Inte
         $value = self::$values[$this->charset]['STOP'];
         $code .= self::$patterns[$value];
 
-        // Generates the Barcode Image
+        // Generates the barcode image
         $y_offset = 5;
         $pixels = 2;
         $length = strlen($code);
         $width = $length;
         $height = 50;
-        $image = imagecreate(($width * $pixels) + 30, $height + 30);
+		$padding = 30;
+        $image = imagecreate(($width * $pixels) + $padding, $height + $padding);
         $fg = imagecolorallocate($image, 0, 0, 0);
         $bg = imagecolorallocate($image, 255, 255, 255);
-        imagefilledrectangle($image, 0, 0, ($width * $pixels) + 30, $height + 30, $bg);
+        imagefilledrectangle($image, 0, 0, ($width * $pixels) + $padding, $height + $padding, $bg);
         for ($x = 0; $x < $length; $x++) {
             $color = ($code[$x] == '1') ? $fg : $bg;
             imagefilledrectangle($image, 15 + ($x * $pixels), $y_offset, 14 + (($x + 1) * $pixels), $y_offset + $height, $color);
         }
 
-        // Adds the Human Readable Label
+        // Adds the human readable label
+		// TODO
 
-        // Outputs the Header and Content
+        // Outputs the header and content
         header("Cache-Control: no-cache, must-revalidate");
         header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
         header('Content-Type: image/png');
